@@ -1,0 +1,186 @@
+<head>
+    <meta charset="utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <link href="/common/resources/css/global.css" rel="stylesheet" data-role="global">
+    <script src="/common/resources/js/global.js"></script>
+    <link rel="stylesheet" href="/common/static/codemirror/lib/codemirror.css">
+    <script src="/common/static/codemirror/lib/codemirror.js"></script>
+    <script src="/common/static/codemirror/mode/css/css.js"></script>
+    <title>【{{.Site.Name}}】 - 论坛版块管理</title>
+    <style>
+        main {padding: 10px;}
+        .tips {padding: 0 10px;color: green;}
+        .title {font-size: 18px;line-height: 30px;font-weight: bold;}
+        #bbs .name {font-weight: bolder;}
+        .ops {margin: 12px 0 0 10px;font-size: 12px;padding: 2px 5px;cursor: pointer;}
+        .container {padding: 6px 20px;line-height: 26px;}
+        .container li {list-style: decimal;}
+        .add-area {width: 320px;margin: 20px auto;display: none;}
+        .add-area input, .add-area textarea {display: block;width: 100%;margin: 5px 0 0 0;padding: 5px;}
+        .add-area textarea {max-width: 100%;min-width: 100%;min-height: 80px;max-height: 120px;}
+        .add-area #save {margin: 10px 20px 0 0;padding: 3px 10px;}
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/pages/site/admin/index.html">站点管理</a></li>
+            <li>论坛管理</li>
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="title">论坛模块全局CSS</div>
+        <textarea id="bbsCSS">{{.BBSCSS}}</textarea>
+        <button style="margin-top: 10px" onclick="saveCSS(this)">保存CSS</button>
+    </div>
+    <div class="tips">数据加载中。。。</div>
+    <div class="add-area">
+        <div class="title">在【<span class="itemName"></span>】下添加子版块</div>
+        <input type="text" placeholder="版块名" />
+        <textarea placeholder="版块描述"></textarea>
+        <button id="save">立即添加</button> <a href="">取消</a>
+    </div>
+    <main>
+        <ul id="bbs">
+            <li id="bbs-0" data-parent="">
+                <div>
+                    <span class="name">{{.Site.Name}}</span>
+                    <button class="ops add" onclick="addNewBBS(this.parentNode.parentNode)">添加</button>
+                </div>
+                <ul class="container">
+                </ul>
+            </li>
+        </ul>
+    </main>
+    <script>
+        var editor = CodeMirror.fromTextArea(document.getElementById("bbsCSS"), {
+            lineNumbers: true,
+            lineWrapping: true,
+            mode: "css"
+        })
+        function addNewBBS(bbsItem) {
+            runWithAddParams(function(addParams){
+                fetch('/api/v1/site/admin/bbs', {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        Name: addParams.name,
+                        ParentID: addParams.parentID,
+                        Description: addParams.description
+                    })
+                }).then(handleException).then(json => {
+                    window.location.reload()
+                }).catch(e => {
+                    alert(e.data.Message)
+                    window.location.reload()
+                })
+            }, bbsItem)
+        }
+
+        function runWithAddParams(callback, bbsItem) {
+            let bbsIdString = bbsItem.id
+            document.querySelector('.add-area .itemName').innerHTML = bbsItem.getAttribute('data-parent') + bbsItem.querySelector('.name').innerHTML
+            document.querySelector('.add-area').style.display = 'block'
+            let bbsName = document.querySelector(".add-area input")
+            let bbsRemark = document.querySelector(".add-area textarea")
+            let saveBtn = document.querySelector("#save")
+            saveBtn.onclick = _ => {
+                let params = {
+                    name: bbsName.value,
+                    parentID: bbsIdString.substring(4).trim(),
+                    description: bbsRemark.value
+                }
+                // disable input
+                document.querySelectorAll("textarea").forEach(text => {
+                    text.disabled = true
+                })
+                // loadding
+                saveBtn.innerHTML = '提交中...'
+                saveBtn.disabled = true
+                callback(params)
+            }
+        }
+
+        function loadBBS() {
+            fetch('/api/v1/site/admin/bbs', {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(handleException).then(json => {
+                document.querySelector('.tips').style.display = 'none'
+                renderBBS(json.Data)
+            }).catch(e => {
+                console.log(e)
+                alert(e.data.Message)
+                window.location.reload()
+            })
+        }
+
+        function renderBBS(list) {
+            let container = document.querySelector('#bbs-0')
+            list.forEach(data => {
+                let subContainer = container.querySelector('ul')
+                let parentName = ''
+                if(data.ParentID) {
+                    let parentItem = document.querySelector('#bbs-'+data.ParentID)
+                    subContainer = document.querySelector('#bbs-'+data.ParentID+' ul')
+                    pp = parentItem.getAttribute('data-parent')
+                    if (pp) {
+                        parentName = pp  + ' > ' + document.querySelector('#bbs-'+data.ParentID + ' .name').innerHTML + ' > '
+                    } else {
+                        parentName = document.querySelector('#bbs-'+data.ParentID + ' .name').innerHTML + ' > '
+                    }
+                }
+
+                let li = document.createElement('li')
+                li.id = 'bbs-' + data.ID
+
+                let btn = document.createElement('button')
+                btn.classList = 'ops add'
+                btn.innerHTML = '添加子版'
+                btn.onclick = function() {
+                    addNewBBS(this.parentNode.parentNode)
+                }
+
+                let div = document.createElement('div')
+                
+                let span = document.createElement('span')
+                span.classList = 'name'
+                span.innerHTML = '<a href="/bbs-'+data.ID+'.html">'+data.Name+'</a>'
+                div.appendChild(span)
+                div.appendChild(btn)
+                li.appendChild(div)
+                
+                let ul = document.createElement('ul')
+                ul.classList = 'container'
+                li.appendChild(ul)
+                li.setAttribute('data-parent', parentName)
+                subContainer.appendChild(li)
+
+            })
+        }
+
+        function saveCSS(btn) {
+            editor.save()
+            btn.disabled = true
+            btn.innerHTML = '保存中...'
+            fetch('/api/v1/site/admin/bbs/css', {
+                method: 'PATCH',
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    CSS: bbsCSS.value
+                })
+            }).then(handleException).then(_=>location.reload()).catch(e => {
+                executeException(e)
+                location.reload()
+            })
+        }
+        loadBBS()
+    </script>
+</body>

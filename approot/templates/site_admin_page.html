@@ -1,0 +1,71 @@
+<head>
+    <meta charset="utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <link href="/common/resources/css/global.css" rel="stylesheet" data-role="global">
+    <script src="/common/resources/js/global.js"></script>
+    <title>【{{.SiteContext.Site.Name}}】- 自定义页面</title>
+    <style>
+        #mainAction {float: right;margin: -40px 0 0 0}
+        #pageName,#pageAlias {display: none;margin: 0 0 10px 0}
+        .pages {padding-left: 20px;}
+        .pages li {list-style: decimal;line-height: 28px;}
+        .pages li span {background-color: #ccc;padding: 3px 10px;font-size: 12px;border-radius: 3px;margin: 5px;}
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/pages/site/admin/index.html">站点管理</a></li>
+            <li>自定义页面</li>
+        </ul>
+    </nav>
+    <div class="container">
+        <div class="title">页面列表</div>
+        <button id="mainAction" onclick="newPageRequest(this)">新增</button>
+        <input id="pageName" type="text" placeholder="页面名称" />
+        <input id="pageAlias" type="text" placeholder="页面别名(唯一)" />
+        <ul class="pages">
+        {{range .Pages}}
+            <li>
+                <a href="/pages/site/admin/pages/{{.ID.Hex}}/editor.html">{{.Name}}</a>
+                <span>{{if eq .Alias "main"}}首页{{else}}<a href="/pages/public{{.Alias}}">{{.Alias}}</a>{{end}}</span></li>
+        {{end}}
+        </ul>
+    </div>
+    <script>
+        function newPageRequest(btn) {
+            if(!pageName.value) {
+                pageName.style.display = 'block'
+                pageAlias.style.display = 'block'
+                pageName.focus()
+                btn.innerHTML = '保存'
+                return
+            }
+            if(!pageAlias.value) {
+                pageAlias.focus()
+                return
+            }
+            btn.disabled = true
+            btn.innerHTML = '提交中...'
+            doRequest()
+        }
+
+        function doRequest() {
+            fetch('/api/v1/site/admin/pages', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    Name: pageName.value,
+                    Alias: pageAlias.value
+                })
+            }).then(handleException).then(_=>window.location.reload()).catch(e => {
+                executeException(e)
+                window.location.reload()
+            })
+        }
+    </script>
+</body>
+

@@ -1,0 +1,87 @@
+<!doctype html><html>
+<head>
+    <meta charset="utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <link href="/common/resources/css/global.css" rel="stylesheet" data-role="global">
+    <script src="/common/resources/js/global.js"></script>
+    <title>创建新站点 - {{.SiteContext.Site.Name}}</title>
+    <style>
+        .title {font-size: 18px;font-weight: bolder;line-height: 32px;margin: 10px 0;}
+        .form #mainAction {padding: 3px 10px;margin: 10px 0;}
+        .site {display: inline-block;padding: 2px 5px;color: #222;}
+        #siteName {width: 100%;padding: 5px;}
+        .form .prefix {width: 80px;padding: 5px 10px;border:none;border-bottom: .5px solid #ccc;}
+        .sites {padding: 0 0 0 25px;}
+        .sites li {list-style: decimal;margin: 5px 0;border-bottom: .5px solid #f0f0f0;}
+        .sites .hosts li {list-style: none;display: inline-block;}
+        .sites li .time {font-size: 13px;float: right;color: #999;margin: -30px 0 0 0;}
+    </style>
+</head>
+<body>
+{{rwctx .SiteContext.Site.Header .SiteContext}}
+<nav>
+    <ul>
+        <li><a href="/">首页</a></li>
+        <li>注册新站点</li>
+    </ul>
+</nav>
+<main>
+    <div class="form">
+        <div class="title">*站点名</div>
+        <input id="siteName" type="text" placeholder="站点名" />
+        <div class="title">*域名</div>
+        <span class="site">https://</span><input class="site prefix" id="sitePrefix" type="text" placeholder="前缀" /><span class="site">.{{.SiteConfig.Domain}}</span>
+        <br />
+        <button id="mainAction" onclick="registerSite()">提交注册</button>
+    </div>
+    <div class="container">
+        <div class="title">最近创建的站点</div>
+        <ul class="sites">
+            {{range .Sites}}
+            <li>
+                <a href="https://{{index .Hosts 0}}">{{.Name}}</a>
+                <ul class="hosts">
+                    {{range $h := .Hosts}}
+                    <li>{{$h}}</li>
+                    {{end}}
+                </ul>
+                <span class="time">{{intelliTime .CreateTime}}</span>
+            </li>
+            {{end}}
+        </ul>
+    </div>
+</main>
+<script>
+    function registerSite() {
+        if(!siteName.value) {
+            siteName.focus()
+            return
+        }
+        if(!sitePrefix.value) {
+            sitePrefix.focus()
+            return
+        }
+        document.querySelectorAll('input').forEach(d => d.disabled = true)
+        mainAction.disabled = true
+        mainAction.innerHTML = '提交中...'
+        fetch('/api/v1/site/sites', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                Prefix: sitePrefix.value,
+                Name: siteName.value,
+            })
+        }).then(handleException).then(json => {
+            window.location.href = 'https://' + sitePrefix.value+'.{{.SiteConfig.Domain}}'
+        }).catch(e => {
+            console.log(e)
+            alert(e.data.Message)
+            window.location.reload()
+        })
+    }
+</script>
+{{rwctx .SiteContext.Site.Footer .SiteContext}}
+</body></html>

@@ -1,0 +1,71 @@
+<!doctype html><html>
+<head>
+    <meta charset="utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <link href="/common/resources/css/global.css" rel="stylesheet" data-role="global">
+    <script src="/common/resources/js/global.js"></script>
+    <title>激活帐号 - {{.SiteContext.Site.Name}}</title>
+    <style>
+        .ops,.tips {padding: 10px;line-height: 26px;max-width: 600px;margin: 20px auto}
+        p{padding: 5px 0;}
+        button {padding: 2px 10px;}
+    </style>
+</head>
+<body>
+{{rwctx .SiteContext.Site.Header .SiteContext}}
+<nav>
+    <ul>
+        <li><a href="/">首页</a></li>
+        <li>帐号中心</li>
+    </ul>
+</nav>
+<div class="tips">
+    <p style="color: red;font-weight: bolder;">当前帐号未激活！</p>
+    <p></p>
+    <p>【{{.SiteContext.Session.Name}}】，你好！</p>
+    <p>你的邮箱是：{{.SiteContext.Session.Email}}</p>
+    <p>我们给该邮箱发送了一份激活邮件，请按引导点击链接激活帐号！</p>
+    <p>或者是使用下面的功能：</p>
+</div>
+<div class="ops">
+    <button id="resend" onclick="sendActiveEmail()">重新发送激活邮件</button>
+    <button onclick="window.location.href='/logout.html?go=login.html'">重新登录</button>
+</div>
+<script>
+    function sendActiveEmail() {
+        if(localStorage.getItem('email-sended')) {
+            alert('稍后再试')
+            return
+        }
+        resend.disabled = true
+        resend.innerHTML = '发送中...'
+        fetch('/api/v1/site/accounts/active', {
+            method: 'PATCH',
+            headers: {
+                "Content-Type": "application/josn"
+            }
+        }).then(_ => {
+            djs()
+        }).catch(executeException)
+    }
+    function djs() {
+        window.localStorage.setItem('email-sended', 'true')
+        resend.innerHTML = '60'
+        resend.disabled = true
+        t = setInterval(_=>{
+            resend.innerHTML = Number(resend.innerHTML) - 1
+            if(Number(resend.innerHTML) == 0 ) {
+                clearInterval(t)
+                resend.disabled = false
+                resend.innerHTML = '重新发送激活邮件'
+                window.localStorage.removeItem('email-sended')
+            }
+        }, 1000)
+    }
+    if(window.localStorage.getItem('email-sended')) {
+        djs()
+    }
+</script>
+{{rwctx .SiteContext.Site.Footer .SiteContext}}
+</body></html>

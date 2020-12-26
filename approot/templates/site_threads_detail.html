@@ -1,0 +1,244 @@
+<!doctype html><html>
+<head>
+    <meta charset="utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <link href="/common/resources/css/global.css" rel="stylesheet" data-role="global">
+    <script src="/common/resources/js/global.js"></script>
+    <script src="https://s3.pstatp.com/cdn/expire-1-M/marked/0.6.2/marked.min.js" type="application/javascript"></script>
+    <script type="text/javascript">
+        marked.setOptions({
+            gfm: true,
+            breaks: true
+        })
+    </script>
+    <title>{{.Thread.Title}} - {{.SiteContext.Site.Name}}</title>
+    <style>
+        @font-face {
+            font-family: josefin sans;
+            font-style: normal;
+            font-weight: 400;
+            src: url(//lib.baomitu.com/fonts/josefin-sans/josefin-sans-regular.eot);
+            src: local("Josefin Sans"),local("JosefinSans-Normal"),url(//lib.baomitu.com/fonts/josefin-sans/josefin-sans-regular.eot?#iefix) format("embedded-opentype"),url(//lib.baomitu.com/fonts/josefin-sans/josefin-sans-regular.woff2) format("woff2"),url(//lib.baomitu.com/fonts/josefin-sans/josefin-sans-regular.woff) format("woff"),url(//lib.baomitu.com/fonts/josefin-sans/josefin-sans-regular.ttf) format("truetype"),url(//lib.baomitu.com/fonts/josefin-sans/josefin-sans-regular.svg#JosefinSans) format("svg")
+        }
+        h1 {font-size: 20px;padding: 10px;}
+        .ops {padding: 0 10px;line-height: 22px;}
+        .ops .author {color: #444;font-weight: bolder;}
+        .ops .author,.ops .time,.ops .viewcount {display: inline-block;}
+        .ops .author a {font-size: 13px;color: #787878;}
+        .ops .time {color: #ccc;font-size: 12px;margin: 0 0 0 5px;}
+        .ops .time span {color: #888;font-size: 12px;}
+        .ops .viewcount{font-size: 12px;margin-left: 5px;}
+        .ops .viewcount span {color: #999;font-size: 12px;font-style: italic;margin: 2px;}
+        .face-img {width: 26px;display: inline;}
+        .content {padding: 10px;line-height: 1.6;word-break: break-word;margin-top: 10px;color: #000;}
+        .content a {border-bottom: .5px dashed #ccc;color: green;}
+        .content .empty-content {text-align: center;color: #ccc;font-size: 16px;padding: 10px;line-height: 28px;}
+        .content code {
+            background: #f5f5f5;padding: 0 3px;display: inline-block;margin: 0 2px;color: #000;font-size: 13px;line-height: 1.2;
+            font-family: Consolas,panic sans,dejavu sans mono,bitstream vera sans mono,Menlo,microsoft yahei,monospace;
+            border: 1px solid #eee;
+        }
+        .content pre code {display: block;padding: 10px 15px;margin: 0 0px;margin-bottom: 15px;overflow-x: auto;}
+        .content p {margin-bottom: 16px;color: #222;line-height: 1.8;font-size: 15px;}
+        .content>:last-child,.content blockquote>:last-child {margin-bottom: 0;}
+        .content h1 {font-size: 22px;color: #159957;}
+        .content h2 {font-size: 18px;border-bottom: 1px solid #eee;line-height: 26px;padding: 0;margin: 15px 0;color: #000;}
+        .content h3, .content h4 {line-height: 22px;padding: 5px 0;margin: 5px 0;color: #000;}
+        .content blockquote {padding: 10px 10px 10px 20px;margin: 10px 0;color: #222;background: #f8f8f8;border-left: 3px solid #159957;}
+        .content ol {padding-left: 20px;}
+        .content ol li {margin: 12px 0;background-color: #fff;color: #222;list-style: decimal;line-height: 1.8;}
+        .content ul {padding-left: 20px;}
+        .content ul li {color: #222;list-style: circle;line-height: 1.8;}
+        .content strong {color: #000;}
+        .content em {color: #000;}
+        .content p img {
+            max-width: 70%;
+            box-shadow: 0 0 10px #bbb;
+            margin: 10px auto;
+            display: block;
+            border-radius: 3px;
+        }
+        .content p .face-img {
+            max-width: none;
+            box-shadow: none;
+            display: inline;
+            border-radius: inherit;
+        }
+        .reply {padding: 10px 6px;border-top: 0.4rem solid rgba(247,248,250,1);margin-top: 20px;}
+        .reply .empty {padding: 12px 5px;border-radius: 2px;}
+        .reply li {padding: 8px 4px;border-radius: 3px;}
+        .reply li:hover {background-color: #f0f0f0;}
+        .reply .author {color: #333;font-weight: bolder;line-height: 22px;}
+        .reply .author a {color: #787878;font-size: 14px;}
+        .reply .author span {padding: 2px 5px;background-color: #f6f6f6;color: #69c;border-radius: 3px;font-size: 12px;line-height: 20px;margin-left: 2px;}
+        .reply .rc {padding: 5px 0;}
+        .reply .rc p,.reply .rc p a {font-size: 14px;}
+        .to-reply {padding: 10px 20px 10px 10px;}
+        .to-reply textarea {padding: 10px 5px; max-width: 100%;min-width: 100%;height: 22px;min-height: 22px;max-height: 200px;}
+        .to-reply textarea:focus {min-height: 80px;outline: none;}
+        .to-reply button {padding: 3px 10px;margin: 10px 0;font-size: 14px;}
+        .faces {
+            position: fixed;
+            margin: auto;
+            bottom: 100px;
+            width: 320px;
+            left: 0;right: 0;
+            background-color: #fff;
+            padding: 10px;
+            box-shadow: 0 0 10px #ccc;
+            border-radius: 3px;
+            display: none;
+        }
+        .faces li {display: inline-block;padding: 5px;}
+        .faces li:hover {background: #f0f0f0;cursor: pointer;}
+        .faces li img {width: 26px;}
+        @media screen and (min-width: 720px) {
+            .faces {bottom: 200px;width: 720px;}
+        }
+    </style>
+    <link href="/common/resources/css/bbs/{{.SiteContext.Site.ID.Hex}}.css" rel="stylesheet" data-role="global">
+</head>
+<body>
+    {{rwctx .SiteContext.Site.Header .SiteContext}}
+    <nav>
+        <ul>
+            <li><a href="/">首页</a></li>
+            {{range .BBSContexts}}
+            <li><a href="/bbs-{{.ID.Hex}}.html">{{.Name}}</a></li>
+            {{end}}
+            <li>帖子</li>
+        </ul>
+    </nav>
+    <main>
+    <h1>{{.Thread.Title}}</h1>
+    <div class="ops">
+        <div class="author"><a href="/profile/{{.Thread.Author.Name}}">{{.Thread.Author.Name}}</a></div>
+        <div class="time">发表于<span>{{intelliTime .Thread.CreateTime}}</span></div>
+        <div class="viewcount"><span>{{.Thread.ViewCount}}</span>阅</div>
+    </div>
+    <article class="content">{{rwubb .Thread.Content}}</article>
+    <div class="reply">
+        <ul>
+            {{$thread := .Thread}}
+            {{if eq (len .Thread.Replies) 0}}
+            <li class="empty">暂无跟帖</li>
+            {{else}}
+            {{range .Thread.Replies}}
+            <li ondblclick="fastToReply(this)" data-author="{{.Author.Name}}">
+                <div class="author"><a href="/profile/{{.Author.Name}}">{{.Author.Name}}</a>{{if eq .Author.Name $thread.Author.Name}}<span>楼主</span>{{end}}</div>
+                <div class="rc">{{rwubb .Content}}</div>
+            </li>
+            {{end}}
+            {{end}}
+        </ul>
+    </div>
+    <div class="to-reply" name="r">
+        {{if .SiteContext.Session}}
+        <div class="title">
+            跟帖
+        </div>
+        <textarea id="replyContent" placeholder="说点什么..."></textarea>
+        <button id="replyBtn" onclick="reply(this)">评论该帖子</button>
+        {{else}}
+        <a href="/login.html?go={{.SiteContext.RequestURI}}">点我马上登录</a>，以跟评本帖
+        {{end}}
+    </div>
+    <div id="baseui"></div>
+    <div class="faces" id="facesArea">
+        <ul>
+        </ul>
+    </div>
+    </main>
+    <script>
+        let article = document.querySelector('article')
+        article.innerHTML = marked(article.innerHTML)
+        article.querySelectorAll('img').forEach(i => {
+            if(i.alt.startsWith('face-')) {
+                i.classList += 'face-img'
+                i.align = 'absmiddle'
+            }
+        })
+        document.querySelectorAll('.rc').forEach(c => {
+            c.innerHTML = marked(c.innerHTML)
+            c.querySelectorAll('img').forEach(i => {
+                if(i.alt.startsWith('face-')) {
+                    i.classList += 'face-img'
+                    i.align = 'absmiddle'
+                }
+            })
+        })
+    </script>
+    <script>
+        function fastToReply(item) {
+            replyContent.value += '@'+item.getAttribute('data-author')+', '
+            setTimeout(_=>replyContent.focus(), 100)
+        }
+        function reply(btn) {
+            if (!replyContent.value) {
+                replyContent.focus()
+                return
+            }
+            btn.disabled = true
+            btn.innerHTML = '评论中...'
+            replyContent.disabled = true
+            fetch('/api/v1/site/threads/{{.Thread.ID.Hex}}/reply', {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    Content: replyContent.value
+                })
+            }).then(handleException).then(json => {
+                window.localStorage.removeItem('threads-{{.Thread.ID.Hex}}-reply')
+                window.location.reload()
+            }).catch(e => {
+                executeException(e)
+                window.location.reload()
+            })
+        }
+
+        replyContent.onblur = _=>{
+            window.localStorage.setItem('threads-{{.Thread.ID.Hex}}-reply', replyContent.value)
+            if(replyContent.value && !isShow()) {
+                if(confirm('立即发布评论？')) {
+                    setTimeout(_=>replyBtn.click(), 100)
+                }
+            }
+        }
+        replyContent.ondblclick = _ => {
+            showFaces()
+        }
+        let rc = window.localStorage.getItem('threads-{{.Thread.ID.Hex}}-reply')
+        if(rc) replyContent.value = rc
+
+        function showFaces() {
+            facesArea.style.display = 'block'
+            let faceContainer = document.querySelector('#facesArea ul')
+            if(faceContainer.innerHTML.trim()) {
+                return
+            }
+            fetch('/api/v1/common/faces', {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            }).then(handleException).then(json => {
+                Object.keys(json.Data).forEach(k => {
+                    let li = '<li data-name="'+k+'" onclick="appendFace(this)"><img src="/common/static/face/'+json.Data[k]+'" /></li>'
+                    faceContainer.innerHTML += li+'\n'
+                })
+            })
+        }
+        function appendFace(f) {
+            facesArea.style.display = 'none'
+            replyContent.value += '{'+f.getAttribute('data-name')+'}'
+            replyContent.focus()
+        }
+        function isShow() {
+            return facesArea.style.display == 'block'
+        }
+    </script>
+    {{rwctx .SiteContext.Site.Footer .SiteContext}}
+</body></html>

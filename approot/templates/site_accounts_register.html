@@ -1,0 +1,72 @@
+<!doctype html><html>
+<head>
+    <meta charset="utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <link href="/common/resources/css/global.css" rel="stylesheet" data-role="global">
+    <script src="/common/resources/js/global.js"></script>
+    <title>注册 - {{.SiteContext.Site.Name}}</title>
+    <style>
+        .form input {width: 100%;padding: 5px;margin: 5px 0;}
+    </style>
+</head>
+<body>
+{{rwctx .SiteContext.Site.Header .SiteContext}}
+<nav>
+    <ul>
+        <li><a href="/">首页</a></li>
+        <li>帐号中心</li>
+    </ul>
+</nav>
+<div class="form">
+    <div class="title">{{.SiteContext.Site.Name}}欢迎你！</div>
+    <input id="uname" class="for-store" type="text" placeholder="用户名" />
+    <input id="email" class="for-store" type="email" placeholder="邮箱" />
+    <input id="passwd" type="password" placeholder="密码" />
+    <button style="margin: 10px 10px 0 0;" id="doAction" onclick="register()">注册</button> <a href="/login.html">已有帐号</a>
+</div>
+<script>
+    document.onkeydown = function (e) {
+        var theEvent = window.event || e;
+        var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+        if (code == 13) {
+            register()
+        }
+}
+    function register() {
+        if(!uname.value) {
+            uname.focus()
+            return
+        }
+        if(!email.value) {
+            email.focus()
+            return
+        }
+        if(!passwd.value) {
+            passwd.focus()
+            return
+        }
+        document.querySelectorAll('input').forEach(d => d.disabled = true)
+        doAction.innerHTML = '登录中...'
+        doAction.disabled = true
+        fetch('/api/v1/site/accounts', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                Name: uname.value,
+                Email: email.value,
+                Password: passwd.value
+            })
+        }).then(handleException).then(json => {
+            window.location.href = '/login.html'
+        }).catch(e => {
+            console.log(e)
+            alert(e.data.Message)
+            window.location.reload()
+        })
+    }
+</script>
+{{rwctx .SiteContext.Site.Footer .SiteContext}}
+</body></html>

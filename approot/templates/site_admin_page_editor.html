@@ -1,0 +1,115 @@
+<head>
+    <meta charset="utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <link href="/common/resources/css/global.css" rel="stylesheet" data-role="global">
+    <script src="/common/resources/js/global.js"></script>
+    <link rel="stylesheet" href="/common/static/codemirror/lib/codemirror.css">
+    <link rel="stylesheet" href="../addon/hint/show-hint.css">
+    <script src="/common/static/codemirror/lib/codemirror.js"></script>
+    <script src="/common/static/codemirror/addon/hint/show-hint.js"></script>
+    <script src="/common/static/codemirror/addon/hint/xml-hint.js"></script>
+    <script src="/common/static/codemirror/addon/hint/html-hint.js"></script>
+    <script src="/common/static/codemirror/mode/xml/xml.js"></script>
+    <script src="/common/static/codemirror/mode/javascript/javascript.js"></script>
+    <script src="/common/static/codemirror/mode/css/css.js"></script>
+    <script src="/common/static/codemirror/mode/htmlmixed/htmlmixed.js"></script>
+    
+    <title>【{{.Page.Name}}】 - 页面编辑器</title>
+    <style>
+        body {padding: 0;margin: 0;font-size: 16px;}
+        .title {font-size: 18px;line-height: 30px;font-weight: bold;}
+        .edit-area {padding: 10px;line-height: 28px;}
+        .edit-area textarea {display: block;max-width: 100%;min-width: 100%;min-height: 46px;padding: 10px;}
+        .edit-area .longText:focus {height: 900px;}
+        .floatOps {position: fixed;top: 45px;right: 130px;display: inline-block;z-index: 100;}
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/pages/site/admin/index.html">站点管理</a></li>
+            <li><a href="/pages/site/admin/pages.html">自定义页面</a></li>
+            <li>页面编辑</li>
+        </ul>
+    </nav>
+    <div class="edit-area">
+        <div class="title">*标题</div>
+        <textarea id="pageName">{{.Page.Name}}</textarea>
+        <div class="title">head标签内</div>
+        <textarea class="longText" id="pageHeader">{{.Page.Header}}</textarea>
+        <div class="title">body标签内</div>
+        <textarea class="longText" id="pageBody">{{.Page.Body}}</textarea>
+        <div class="title">body标签外</div>
+        <textarea class="longText" id="pageFooter">{{.Page.Footer}}</textarea>
+        <button class="floatMianAction" id="save">立即保存修改</button>
+        <button class="floatOps" {{if .Page.SysPage}}disabled{{end}} onclick="deletePage(this)">删除</button>
+    </div>
+    <script>
+        var pageHeaderEditor = CodeMirror.fromTextArea(document.getElementById("pageHeader"), {
+            lineNumbers: true,
+            lineWrapping: true,
+            mode: 'htmlmixed'
+        })
+        var pageBodyEditor = CodeMirror.fromTextArea(document.getElementById("pageBody"), {
+            lineNumbers: true,
+            lineWrapping: true,
+            mode: 'htmlmixed'
+        })
+        var pageFooterEditor = CodeMirror.fromTextArea(document.getElementById("pageFooter"), {
+            lineNumbers: true,
+            lineWrapping: true,
+            mode: 'htmlmixed'
+        })
+        let saveBtn = document.querySelector("#save")
+        let pageName = document.querySelector("#pageName")
+        let pageHeader = document.querySelector("#pageHeader")
+        let pageBody = document.querySelector("#pageBody")
+        let pageFooter = document.querySelector("#pageFooter")
+
+        saveBtn.onclick = _ => {
+            pageHeaderEditor.save()
+            pageBodyEditor.save()
+            pageFooterEditor.save()
+            // loadding
+            saveBtn.innerHTML = '提交中...'
+            saveBtn.disabled = true
+
+            // api
+            let id = '{{.Page.ID.Hex}}'
+            fetch('/api/v1/site/admin/pages/' + id, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    Name: pageName.value,
+                    Header: pageHeader.value,
+                    Body: pageBody.value,
+                    Footer: pageFooter.value
+                })
+            }).then(handleException).then(json => {
+                window.location.reload()
+            }).catch(e => {
+                alert(e.data.Message)
+                window.location.reload()
+            })
+        }
+
+        function deletePage(btn) {
+            if(confirm('确定删除本页面？')) {
+                btn.disabled = true
+                btn.innerHTML = '删除中...'
+                fetch('/api/v1/site/admin/pages/{{.Page.ID.Hex}}', {
+                    method: 'DELETE',
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                }).then(handleException).then(_=>location.href = '../../pages.html').catch(e => {
+                    executeException(e)
+                    location.reload()
+                })
+            }
+        }
+    </script>
+</body>

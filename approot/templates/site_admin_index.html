@@ -1,0 +1,48 @@
+<head>
+    <meta charset="utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <link href="/common/resources/css/global.css" rel="stylesheet" data-role="global">
+    <script src="/common/resources/js/global.js"></script>
+    <title>【{{.SiteContext.Site.Name}}】- 站点管理</title>
+    <style>
+        h1 {padding: 10px;}
+        .funcs {padding: 10px 10px 10px 30px;}
+        .funcs li {list-style: decimal;line-height: 28px;margin-left: 6px;clear: both;}
+        .funcs li span {float: right;font-size: 13px;color: #999;}
+    </style>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="/">首页</a></li>
+            <li>站点管理</li>
+        </ul>
+    </nav>
+    <div class="container title">{{.SiteContext.Site.Name}}</div>
+    <ul class="funcs">
+        <li><a href="/pages/site/admin/site/editor.html">站点信息</a></li>
+        <li><a href="/pages/site/admin/pages.html">自定义页面</a></li>
+        <li><a href="/pages/site/admin/bbs/index.html">论坛模块</a></li>
+        <li>文章模块</li>
+        <li>域名管理</li>
+        <li>一键导入/导出站点</li>
+        <li>SEO专区</li>
+        <li>站点主题</li>
+        <li>插件中心</li>
+        <li><a href="https://fora.run/pages/public/learn.html">技巧书</a></li>
+        <li><a href="https://github.com/tivizi/forarun">Contribution</a></li>
+    </ul>
+    <div class="container title">主站管理</div>
+    <ul class="funcs">
+        <li><a href="/pages/admin/resources.html">资源编辑器</a></li>
+    </ul>
+    <div class="container title">在线用户</div>
+    <ul class="funcs">
+        {{range .Onlines}}
+        <li><a href="/profile/{{.User.Name}}">{{.User.Name}}</a><span>{{.User.UserID}}, {{intelliTime .LastActiveTime}}, {{region .IP}}</span></li>
+        {{end}}
+    </ul>
+    <div class="container"></div>
+</body>
+

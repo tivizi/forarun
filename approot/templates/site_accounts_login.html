@@ -1,0 +1,110 @@
+<!doctype html><html>
+<head>
+    <meta charset="utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <link href="/common/resources/css/global.css" rel="stylesheet" data-role="global">
+    <script src="/common/resources/js/global.js"></script>
+    <title>登录 - {{.SiteContext.Site.Name}}</title>
+    <style>
+        .form input {width: 100%;padding: 5px;margin: 5px 0;}
+        .form .reset {margin-top: 20px;display: none;}
+    </style>
+</head>
+<body>
+{{rwctx .SiteContext.Site.Header .SiteContext}}
+<nav>
+    <ul>
+        <li><a href="/">首页</a></li>
+        <li>帐号中心</li>
+    </ul>
+</nav>
+<div class="form">
+    <div class="title">很高兴又见到你</div>
+    <input id="user" class="for-store" type="text" placeholder="用户名/邮箱" />
+    <input id="passwd" type="password" placeholder="密码" />
+    <button style="margin: 10px 10px 0 0;" id="mainAction" onclick="login()">登录</button>
+    <a href="/register.html">注册一个帐号</a> | 
+    <a href="javascript:;" onclick="requestResetPasswd(this)">忘记密码？</a>
+    <div class="reset" id="resetarea">
+        <input type="text" id="resetuid" class="for-store" placeholder="用户名/邮箱" />
+        <input id="resetpasswd" type="password" placeholder="新密码" />
+        <button id="resetbtn" style="margin-top: 10px" onclick="doReset()">重置密码</button>
+    </div>
+</div>
+<script>
+    function login() {
+        if(!user.value) {
+            user.focus()
+            return
+        }
+        if(!passwd.value) {
+            passwd.focus()
+            return
+        }
+        document.querySelectorAll('input').forEach(d => d.disabled = true)
+        mainAction.innerHTML = '登录中...'
+        mainAction.disabled = true
+        fetch('/api/v1/site/accounts/sessions', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                User: user.value,
+                Password: passwd.value
+            })
+        }).then(handleException).then(json => {
+            window.localStorage.setItem('session', JSON.stringify(json.Data))
+            let goto = new URLSearchParams(location.search).get('go')
+            if (goto) {
+                window.location.href = goto
+                return
+            }
+            window.location.href = '/'
+        }).catch(e => {
+            console.log(e)
+            alert(e.data.Message)
+            window.location.reload()
+        })
+    }
+
+    function requestResetPasswd(btn) {
+        if(resetarea.style.display != 'block') {
+            showRest()
+            return
+        }
+        doReset()
+    }
+    function showRest() {
+        user.disabled = passwd.disabled = mainAction.disabled = true
+        resetarea.style.display = 'block'
+        doReset()
+    }
+    function doReset() {
+        if(!resetuid.value) {
+            resetuid.focus()
+            return
+        }
+        if(!resetpasswd.value) {
+            resetpasswd.focus()
+            return
+        }
+        resetbtn.disabled = true
+        resetbtn.innerHTML = '邮件发送中...'
+        fetch('/api/v1/site/accounts/passwd/'+resetuid.value+'/'+resetpasswd.value+'/email', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(handleException).then(_=>{
+            alert('请查看你的注册邮箱，一封重置邮件已发送成功！')
+            location.reload()
+        }).catch(e=>{
+            executeException(e)
+            location.reload()
+        })
+    }
+</script>
+{{rwctx .SiteContext.Site.Footer .SiteContext}}
+</body></html>

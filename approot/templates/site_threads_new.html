@@ -1,0 +1,140 @@
+<!doctype html><html>
+<head>
+    <meta charset="utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <link href="/common/resources/css/global.css" rel="stylesheet" data-role="global">
+    <script src="/common/resources/js/global.js"></script>
+    <link rel="stylesheet" href="/common/static/codemirror/lib/codemirror.css">
+    <script src="/common/static/codemirror/lib/codemirror.js"></script>
+    <script src="/common/static/codemirror/mode/markdown/markdown.js"></script>
+    <title>发帖 - {{.BBS.Name}} - {{.SiteContext.Site.Name}}</title>
+    <style>
+        .title span {font-size: 12px;color: green;margin-left: 5px;}
+        .form textarea {max-width: 100%;min-width: 100%;padding: 10px 5px;min-height: 46px;line-height: 22px;font-size: 16px;}
+        .form #content {min-height: 420px;}
+        .form .files {position: fixed;top: 45px;right: 130px;display: inline-block;z-index: 100;}
+        .form {padding-right: 10px;}
+        .rawArea {padding: 0 10px 0 0;}
+        @media screen and (min-width: 720px) {
+            .form {max-width: 720px;width: 720px;}
+        }
+        .form {margin-bottom: 0;}
+        .container {padding-top: 0;}
+        .CodeMirror {max-width: 720px;margin-left: 0;}
+    </style>
+</head>
+<body>
+    {{rwctx .SiteContext.Site.Header .SiteContext}}
+    <nav>
+        <ul>
+            <li><a href="/">首页</a></li>
+            {{range .BBS.BBSContexts}}
+            <li><a href="/bbs-{{.ID.Hex}}.html">{{.Name}}</a></li>
+            {{end}}
+            <li>新帖子</li>
+        </ul>
+    </nav>
+    <div class="form">
+        <div class="title">*标题</div>
+        <div class="rawArea">
+            <textarea id="title" placeholder="帖子标题"></textarea>
+        </div>
+        <div class="title">*内容<span>markdown</span></div>
+        <textarea id="content" placeholder="帖子内容"></textarea>
+        <button class="floatMianAction" id="save" onclick="newThread(this)">确认发布帖子</button>
+        <input style="width:1px;height:1px;opacity:0;" onchange="uploadFile(this)" id="fileComp" type="file" multiple />
+        <button class="files" id="files" onclick="fileComp.click()">附件</button>
+    </div>
+    <script>
+    function newThread(btn) {
+        editor.save()
+        // disable input
+        document.querySelectorAll('textarea').forEach(t => t.disabled = true)
+        btn.disabled = true
+        btn.innerHTML = '发布中...'
+        fetch('/api/v1/site/bbs/{{.BBS.ID.Hex}}/threads', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                Title: title.value,
+                Content: content.value
+            })
+        }).then(handleException).then(json => {
+            localStorage.removeItem('threads-new-{{.BBS.ID.Hex}}-title')
+            localStorage.removeItem('threads-new-{{.BBS.ID.Hex}}-content')
+            window.location.href = '/threads-' + json.Data + '.html'
+        }).catch(e => {
+            console.log(e)
+            alert(e.data.Message)
+            window.location.reload()
+        })
+    }
+
+    async function uploadFile(f) {
+        files.disabled = true
+        files.innerHTML = '正在上传(1/'+f.files.length+')...'
+        window._toupload = f.files.length
+        window._filecount = f.files.length
+        
+        for(i =0 ; i < f.files.length; i++) {
+            let formDa = new FormData()
+            formDa.append("file", f.files[i])
+            
+            fetch(new Request('/api/v1/site/files', {
+                credentials: 'include',
+                method: 'POST',
+                body: formDa
+            })).then(handleException).then(resp => {
+                if(editor.getValue() && !editor.getValue().endsWith('\n')) {
+                    editor.setValue(editor.getValue()+'\n')
+                }
+                let fileMD = '- [附件：'+fileNmae(resp.Data.Key)+'('+resp.Data.Size+'bytes)](/common/static/'+resp.Data.Key+')\n'
+                editor.setValue(editor.getValue()+fileMD)                
+                checkUploaded()
+            }).catch(e => {
+                executeException(e)
+                window.location.reload()
+            })
+        }
+    }
+
+    function checkUploaded() {
+        window._toupload -= 1
+        files.innerHTML = '正在上传('+(window._filecount-window._toupload+1)+'/'+window._filecount+')...'
+        if(window._toupload == 0) {
+            files.disabled = false
+            files.innerHTML = '附件'
+            content.focus()
+        }
+    }
+
+    function fileNmae(path) {
+        return path.substring(path.lastIndexOf('/') +1 )
+    }
+
+    title.onchange = _=> {
+        localStorage.setItem('threads-new-{{.BBS.ID.Hex}}-' + title.id, title.value)
+    }
+
+    let titleContent = localStorage.getItem('threads-new-{{.BBS.ID.Hex}}-title')
+    if (titleContent) {
+        title.value = titleContent
+    }
+    let cContent = localStorage.getItem('threads-new-{{.BBS.ID.Hex}}-content')
+    if (cContent) {
+        content.value = cContent
+    }
+    var editor = CodeMirror.fromTextArea(document.getElementById("content"), {
+        lineNumbers: true,
+        lineWrapping: true,
+        mode: "markdown"
+    })
+    editor.on('change', e => {
+        localStorage.setItem('threads-new-{{.BBS.ID.Hex}}-' + content.id, e.getValue())
+    })
+    </script>
+    {{rwctx .SiteContext.Site.Footer .SiteContext}}
+</body></html>

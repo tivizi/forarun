@@ -1,0 +1,17 @@
+<!doctype html><html>
+<head>
+    <meta charset="utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <link href="/common/resources/css/global.css" rel="stylesheet" data-role="global">
+    <script src="/common/resources/js/global.js"></script>
+    <title>{{.Page.Name}}</title>
+{{.Page.Header}}
+</head>
+<body>
+{{rwctx .SiteContext.Site.Header .SiteContext}}
+{{rwctx .Page.Body .SiteContext}}
+{{rwctx .SiteContext.Site.Footer .SiteContext}}
+</body>
+{{.Page.Footer}}
+</html>

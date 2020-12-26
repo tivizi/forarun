@@ -1,0 +1,56 @@
+<!doctype html><html>
+<head>
+    <meta charset="utf-8" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+    <link href="/common/resources/css/global.css" rel="stylesheet" data-role="global">
+    <title>登出 - {{.SiteContext.Site.Name}}</title>
+    <style>
+    </style>
+</head>
+<body>
+{{rwctx .SiteContext.Site.Header .SiteContext}}
+<nav>
+    <ul>
+        <li><a href="/">首页</a></li>
+        <li>帐号中心</li>
+    </ul>
+</nav>
+<div class="form">
+    <div class="title">确定登出吗？</div>
+    <button id="mainAction" onclick="logout()">立即登出</button>
+</div>
+<script>
+    function logout() {
+        mainAction.disabled = true
+        mainAction.innerHTML = '登出中...'
+        fetch('/api/v1/site/accounts/sessions', {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(handleException).then(json => {
+            let goto = new URLSearchParams(location.search).get('go')
+            if(goto) {
+                window.location.href = goto
+                return
+            }
+            window.location.href = '/'
+        }).catch(e => {
+            console.log(e)
+            alert(e.data.Message)
+            window.location.reload()
+        })
+    }
+
+    async function handleException(resp) {
+        if(parseInt(resp.status / 100) != 2) {
+            err = new Error()
+            err.data = await resp.json()
+            throw err
+        }
+        return resp.json()
+    }
+</script>
+{{rwctx .SiteContext.Site.Footer .SiteContext}}
+</body></html>

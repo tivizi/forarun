@@ -1,0 +1,24 @@
+mongodb:
+  uri: mongodb://192.168.3.103:27017
+  username: "root"
+  password: "123456"
+minio:
+  enabled: true
+  endpoint: https://xxxx
+  accessKey: xxx
+  secretKey: xxxx
+qcloud:
+  secretID: xxx
+  secretKey: xxxx
+  enableCDN: true
+  enableCNS: true
+site:
+  domain: fora.run
+smtp:
+  enabled: true
+  host: smtp.exmail.qq.com
+  port: 465
+  ssl: true
+  account: hi@fora.run
+  password: xxx
+

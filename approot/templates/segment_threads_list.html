@@ -1,0 +1,17 @@
+<ul class="list-threads">
+    {{if eq (len .resources) 0}}
+    <li class="empty">暂无帖子</li>
+    {{else}}
+    {{range .resources}}
+    <li>
+        <a class="thread-link" href="/threads-{{.ID.Hex}}.html">{{.Title}}</a>
+        {{if gt (len .Replies) 0}}
+        <span class="rcount"><a href="/threads-{{.ID.Hex}}.html#r">{{len .Replies}}</a></span>
+        {{end}}
+        <div class="item">
+            <span class="author"><a href="/profile/{{.Author.Name}}">{{.Author.Name}}</a></span>
+            <span class="time">{{intelliTime .LastActiveTime}}</span>
+        </div>
+    </li>
+    {{end}}{{end}}
+</ul>

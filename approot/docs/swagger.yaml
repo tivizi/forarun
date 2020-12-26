@@ -1,0 +1,362 @@
+definitions:
+  admin.NewBBSReq:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      parentID:
+        type: string
+    required:
+    - name
+    - parentID
+    type: object
+  admin.NewPageReq:
+    properties:
+      alias:
+        type: string
+      body:
+        type: string
+      footer:
+        type: string
+      header:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  admin.NewResourceReq:
+    properties:
+      contentType:
+        type: string
+      name:
+        type: string
+      raw:
+        type: string
+    required:
+    - contentType
+    - name
+    - raw
+    type: object
+  admin.NewSiteReq:
+    properties:
+      host:
+        type: string
+      name:
+        type: string
+      userID:
+        type: string
+    required:
+    - host
+    - name
+    - userID
+    type: object
+  admin.PatchResourceRawReq:
+    properties:
+      resourceString:
+        type: string
+    required:
+    - resourceString
+    type: object
+  admin.UpdateSiteReq:
+    properties:
+      footer:
+        type: string
+      header:
+        type: string
+      name:
+        type: string
+    required:
+    - name
+    type: object
+  site.NewSessionReq:
+    properties:
+      password:
+        type: string
+      user:
+        type: string
+    required:
+    - password
+    - user
+    type: object
+  site.RegisterAccountReq:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+host: fora.run
+info:
+  contact:
+    email: tivizi@163.com
+    name: Tivizi
+    url: https://fora.run
+  description: 轻量级自助建站系统，随时随地维护站点
+  license: {}
+  title: FORARUN 自助建站系统开放接口文档
+  version: "1.0"
+paths:
+  /api/v1/admin/resources:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: NewResourceReq
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/admin.NewResourceReq'
+      produces:
+      - application/json
+      summary: 新的资源文件
+      tags:
+      - 主站管理
+  /api/v1/admin/resources/{rid}/raw:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: 资源文件ID
+        in: path
+        name: rid
+        required: true
+        type: string
+      - description: PatchResourceRawReq
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/admin.PatchResourceRawReq'
+      produces:
+      - application/json
+      summary: 修改资源文件内容
+      tags:
+      - 主站管理
+  /api/v1/admin/sites:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      summary: 列出所有站点
+      tags:
+      - 主站管理
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: NewSiteReq
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/admin.NewSiteReq'
+      produces:
+      - application/json
+      summary: 新站点
+      tags:
+      - 主站管理
+  /api/v1/admin/sites/:site/user/:user:
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: 站点ID
+        in: path
+        name: siteID
+        required: true
+        type: string
+      - description: 用户ID
+        in: path
+        name: userID
+        required: true
+        type: string
+      produces:
+      - application/json
+      summary: 绑定用户和站点
+      tags:
+      - 主站管理
+  /api/v1/site/accounts:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: RegisterAccountReq
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/site.RegisterAccountReq'
+      produces:
+      - application/json
+      summary: 注册用户
+      tags:
+      - 站点功能
+  /api/v1/site/accounts/{uid}/passwd/{passwd}:
+    patch:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      summary: 发送重置密码邮件
+      tags:
+      - 站点功能
+  /api/v1/site/accounts/active:
+    patch:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      summary: 发送激活账户邮件
+      tags:
+      - 站点功能
+  /api/v1/site/accounts/sessions:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: NewSessionReq
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/site.NewSessionReq'
+      produces:
+      - application/json
+      summary: 用户新会话
+      tags:
+      - 站点功能
+  /api/v1/site/admin/bbs:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      summary: 列出站点所有论坛版块
+      tags:
+      - 站点管理
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: NewBBSReq
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/admin.NewBBSReq'
+      produces:
+      - application/json
+      summary: 新的论坛版块
+      tags:
+      - 站点管理
+  /api/v1/site/admin/bbs/css:
+    patch:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      summary: 更新站点论坛CSS
+      tags:
+      - 站点管理
+  /api/v1/site/admin/pages:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: NewPageReq
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/admin.NewPageReq'
+      produces:
+      - application/json
+      summary: 新的页面
+      tags:
+      - 站点管理
+  /api/v1/site/admin/pages/{pageID}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: 页面ID
+        in: path
+        name: pageID
+        required: true
+        type: string
+      produces:
+      - application/json
+      summary: 删除页面
+      tags:
+      - 站点管理
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: 页面ID
+        in: path
+        name: pageID
+        required: true
+        type: string
+      - description: NewPageReq
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/admin.NewPageReq'
+      produces:
+      - application/json
+      summary: 修改页面
+      tags:
+      - 站点管理
+  /api/v1/site/admin/sites:
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: UpdateSiteReq
+        in: body
+        name: req
+        required: true
+        schema:
+          $ref: '#/definitions/admin.UpdateSiteReq'
+      produces:
+      - application/json
+      summary: 更新站点
+      tags:
+      - 站点管理
+  /api/v1/site/bbs:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      summary: 列出站点所有论坛版块
+      tags:
+      - 站点功能
+  /api/v1/site/bbs/:bbs/threads:
+    post:
+      summary: 新帖子
+      tags:
+      - 站点功能
+  /api/v1/site/sites:
+    post:
+      summary: 新站点
+      tags:
+      - 站点功能
+  /api/v1/site/threads/:tid/reply:
+    post:
+      summary: 新帖子回复
+      tags:
+      - 站点功能
+swagger: "2.0"
