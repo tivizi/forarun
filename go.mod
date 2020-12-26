@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/alecthomas/template v0.0.0-20190718012654-fb15b899a751
-	github.com/bububa/ip2region-go v0.0.0-20171108083718-7c353ab2c599 // indirect
+	github.com/bububa/ip2region-go v0.0.0-20171108083718-7c353ab2c599
 	github.com/gin-gonic/gin v1.6.3
 	github.com/google/uuid v1.1.2
 	github.com/johntech-o/iphelper v0.0.0-20160608121843-96f2c4086b91
