@@ -3,14 +3,14 @@ package base
 import (
 	"os"
 
-	"github.com/johntech-o/iphelper"
+	"github.com/bububa/ip2region-go"
 )
 
-var ipStore *iphelper.IpStore
+var ipStore *ip2region.Ip2Region
 
 func init() {
-	if ok, _ := fileExists("ip.dat"); ok {
-		ipStore = iphelper.NewIpStore("ip.dat")
+	if ok, _ := fileExists("ip2region.db"); ok {
+		ipStore, _ = ip2region.New("ip2region.db")
 	}
 }
 
@@ -22,11 +22,11 @@ func SimpleRegion(ip string) string {
 	if len(ip) == 0 {
 		return "<EMPTY>"
 	}
-	geo, err := ipStore.GetGeoByIp(ip)
+	geo, err := ipStore.BinarySearch(ip)
 	if err != nil {
 		return err.Error()
 	}
-	return geo["country"] + geo["city"] + geo["zone"]
+	return geo.String()
 }
 
 func fileExists(path string) (bool, error) {
