@@ -362,12 +362,13 @@ func onUnauthorized(c *gin.Context, site *Context) {
 
 func funcMapForRender() template.FuncMap {
 	return template.FuncMap{
-		"rwctx":       RenderPageWithContext,
-		"intelliTime": IntelliTime,
-		"rwface":      RenderFace,
-		"rwubb":       RenderUBB,
-		"bbs":         ThreadContent,
-		"site":        FromID,
-		"region":      base.SimpleRegion,
+		"rwctx":           RenderPageWithContext,
+		"intelliTime":     IntelliTime,
+		"rwface":          RenderFace,
+		"rwubb":           RenderUBB,
+		"bbs":             ThreadContent,
+		"site":            FromID,
+		"region":          base.SimpleRegion,
+		"intelliDuration": IntelliDuration,
 	}
 }

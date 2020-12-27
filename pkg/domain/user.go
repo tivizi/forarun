@@ -13,17 +13,24 @@ import (
 
 // User 用户
 type User struct {
-	ID          primitive.ObjectID `bson:"_id"`
-	SiteID      primitive.ObjectID
-	Name        string
-	Password    string
-	Avatar      string
-	Phone       string
-	Email       string
-	CreateTime  time.Time
-	Coins       *map[string]int64
-	Active      bool
-	ActiveToken string
+	ID             primitive.ObjectID `bson:"_id"`
+	SiteID         primitive.ObjectID
+	Name           string
+	Password       string
+	Avatar         string
+	Phone          string
+	Email          string
+	CreateTime     time.Time
+	Coins          *map[string]int64
+	OnlineDuration *map[string]OnlineObj
+	Active         bool
+	ActiveToken    string
+}
+
+// OnlineObj 在线时长对象
+type OnlineObj struct {
+	Duration       int64
+	LastActiveTime time.Time
 }
 
 // LoadUserByID 按ID加载用户
@@ -80,14 +87,15 @@ func NewUser(name, email, password string, siteID primitive.ObjectID) (*User, er
 		return nil, errors.New("用户名/邮箱已被注册")
 	}
 	user := User{
-		ID:          primitive.NewObjectID(),
-		SiteID:      siteID,
-		Name:        name,
-		Email:       email,
-		Coins:       &map[string]int64{},
-		Password:    base.PasswordAlgo(password),
-		CreateTime:  time.Now(),
-		ActiveToken: uuid.New().String(),
+		ID:             primitive.NewObjectID(),
+		SiteID:         siteID,
+		Name:           name,
+		Email:          email,
+		Coins:          &map[string]int64{},
+		OnlineDuration: &map[string]OnlineObj{},
+		Password:       base.PasswordAlgo(password),
+		CreateTime:     time.Now(),
+		ActiveToken:    uuid.New().String(),
 	}
 	_, err := db.Collection("users").InsertOne(context.Background(), user)
 	return &user, err

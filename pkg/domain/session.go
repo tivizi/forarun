@@ -99,6 +99,16 @@ func NewOnlineActive(siteid primitive.ObjectID, ua, clientIP string, session *Se
 		"ip":             clientIP,
 		"lastactivetime": time.Now(),
 	}}, &options)
+	userid, err := primitive.ObjectIDFromHex(session.UserID)
+	if err == nil {
+		db.Collection("users").UpdateOne(context.Background(), bson.M{
+			"_id": userid,
+			"onlineduration." + siteid.Hex() + ".lastactivetime": bson.M{"$lt": time.Now()},
+		}, bson.M{
+			"$inc": bson.M{"onlineduration." + siteid.Hex() + ".duration": 10 * 60},
+			"$set": bson.M{"onlineduration." + siteid.Hex() + ".lastactivetime": time.Now().Add(10 * time.Minute)},
+		})
+	}
 	db.Collection("onlines").DeleteMany(context.Background(), bson.M{"lastactivetime": bson.M{
 		"$lt": time.Now().Add(-time.Minute * 10),
 	}})

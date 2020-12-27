@@ -13,6 +13,19 @@ func IntelliTime(t time.Time) string {
 	return fmtDuration(time.Now().Sub(t))
 }
 
+// IntelliDuration 智能显示时间间隔
+func IntelliDuration(seconds int64) string {
+	h := int64(seconds / 3600)
+	m := int64(seconds / 60)
+	if h != 0 {
+		return fmt.Sprintf("%d小时", h)
+	}
+	if m != 0 {
+		return fmt.Sprintf("%d分钟", m)
+	}
+	return fmt.Sprintf("%d秒", seconds)
+}
+
 func fmtDuration(d time.Duration) string {
 	h := int64(d / time.Hour)
 	m := int64(d / time.Minute)
