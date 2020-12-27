@@ -111,8 +111,8 @@ func NewOnlineActive(siteid primitive.ObjectID, ua, clientIP string, session *Se
 				}},
 			},
 		}, bson.M{
-			"$inc": bson.M{"onlineduration." + siteid.Hex() + ".duration": 10 * 60},
-			"$set": bson.M{"onlineduration." + siteid.Hex() + ".lastactivetime": time.Now().Add(10 * time.Minute)},
+			"$inc": bson.M{"onlineduration." + siteid.Hex() + ".duration": 60},
+			"$set": bson.M{"onlineduration." + siteid.Hex() + ".lastactivetime": time.Now().Add(time.Minute)},
 		})
 		fmt.Println(userid, err)
 	}
