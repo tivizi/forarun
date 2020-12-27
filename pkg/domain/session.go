@@ -106,7 +106,7 @@ func NewOnlineActive(siteid primitive.ObjectID, ua, clientIP string, session *Se
 			"$and": bson.A{
 				bson.M{"_id": userid},
 				bson.M{"$or": bson.A{
-					bson.M{"onlineduration": nil},
+					bson.M{"onlineduration." + siteid.Hex(): nil},
 					bson.M{"onlineduration." + siteid.Hex() + ".lastactivetime": bson.M{"$lt": time.Now()}},
 				}},
 			},

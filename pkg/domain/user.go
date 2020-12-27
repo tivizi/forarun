@@ -22,7 +22,7 @@ type User struct {
 	Email          string
 	CreateTime     time.Time
 	Coins          *map[string]int64
-	OnlineDuration *map[string]OnlineObj
+	OnlineDuration *map[string]*OnlineObj
 	Active         bool
 	ActiveToken    string
 }
@@ -92,7 +92,7 @@ func NewUser(name, email, password string, siteID primitive.ObjectID) (*User, er
 		Name:           name,
 		Email:          email,
 		Coins:          &map[string]int64{},
-		OnlineDuration: &map[string]OnlineObj{},
+		OnlineDuration: &map[string]*OnlineObj{},
 		Password:       base.PasswordAlgo(password),
 		CreateTime:     time.Now(),
 		ActiveToken:    uuid.New().String(),
