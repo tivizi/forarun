@@ -38,7 +38,11 @@
                     {{index .User.Coins .SiteContext.Site.ID.Hex}}
                 {{else}}0{{end}}
             {{else}}0{{end}}</span></li>
-        <li>在线时长：{{if .User.OnlineDuration}}<span>{{intelliDuration (index .User.OnlineDuration .SiteContext.Site.ID.Hex).Duration}}</span>{{end}}</li>
+        <li>在线时长：{{if .User.OnlineDuration}}
+            <span>{{intelliDuration (index .User.OnlineDuration .SiteContext.Site.ID.Hex).Duration}}</span>
+            {{else}}
+            <span>从未</span>
+            {{end}}</li>
         <li>状态：{{if .User.Active}}<span class="actived">已激活</span>{{else}}<span class="unactived">未激活</span>{{end}}</li>
     </ul>
     {{if .SiteContext.Session}}
