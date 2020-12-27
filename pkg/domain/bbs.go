@@ -256,7 +256,7 @@ func (t *Thread) Good(session *Session) error {
 		},
 		"$push": bson.M{
 			"goodusers": session,
-		}
+		},
 	})
 	if err != nil {
 		return err
