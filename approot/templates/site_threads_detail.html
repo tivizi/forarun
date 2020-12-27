@@ -147,7 +147,7 @@
             {{range .Thread.Replies}}
             <li ondblclick="fastToReply(this)" data-author="{{.Author.Name}}">
                 <div class="author"><a href="/profile/{{.Author.Name}}">{{if .Author.Name}}{{.Author.Name}}{{else}}Name Load Error{{end}}</a>{{if eq .Author.Name $thread.Author.Name}}<span>楼主</span>{{end}}</div>
-                <div class="rc">{{rwubb .Content}}</div>
+                <div class="rc content">{{rwubb .Content}}</div>
             </li>
             {{end}}
             {{end}}
