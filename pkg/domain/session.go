@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -99,15 +100,21 @@ func NewOnlineActive(siteid primitive.ObjectID, ua, clientIP string, session *Se
 		"ip":             clientIP,
 		"lastactivetime": time.Now(),
 	}}, &options)
-	userid, err := primitive.ObjectIDFromHex(session.UserID)
-	if err == nil {
-		db.Collection("users").UpdateOne(context.Background(), bson.M{
-			"_id": userid,
-			"onlineduration." + siteid.Hex() + ".lastactivetime": bson.M{"$lt": time.Now()},
+
+	if userid, err := primitive.ObjectIDFromHex(session.UserID); err == nil {
+		_, err = db.Collection("users").UpdateOne(context.Background(), bson.M{
+			"$and": bson.A{
+				bson.M{"_id": userid},
+				bson.M{"$or": bson.A{
+					bson.M{"onlineduration": nil},
+					bson.M{"onlineduration." + siteid.Hex() + ".lastactivetime": bson.M{"$lt": time.Now()}},
+				}},
+			},
 		}, bson.M{
 			"$inc": bson.M{"onlineduration." + siteid.Hex() + ".duration": 10 * 60},
 			"$set": bson.M{"onlineduration." + siteid.Hex() + ".lastactivetime": time.Now().Add(10 * time.Minute)},
 		})
+		fmt.Println(userid, err)
 	}
 	db.Collection("onlines").DeleteMany(context.Background(), bson.M{"lastactivetime": bson.M{
 		"$lt": time.Now().Add(-time.Minute * 10),
