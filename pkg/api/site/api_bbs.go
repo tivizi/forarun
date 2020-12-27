@@ -1,6 +1,7 @@
 package site
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/gin-gonic/gin"
@@ -13,6 +14,7 @@ func init() {
 	r.GET("/api/v1/site/bbs", listBBS)
 	r.POST("/api/v1/site/bbs/:bbs/threads", newThread)
 	r.POST("/api/v1/site/threads/:tid/reply", newReply)
+	r.PATCH("/api/v1/common/threads/:tid/good", newThreadGood)
 }
 
 // NewThreadReq 新帖子
@@ -71,5 +73,25 @@ func newReply(c *gin.Context, site *site.Context) (interface{}, error) {
 		return nil, err
 	}
 	err = thread.NewReply(newReplyReq.Content, site.UserAgent, site.Session)
+	return nil, err
+}
+
+// @summary 帖子点赞
+// @tags 站点功能
+// @params tid path string true "帖子ID"
+// @router /api/v1/site/threads/:tid/good [patch]
+func newThreadGood(c *gin.Context, site *site.Context) (interface{}, error) {
+	thread, err := domain.LoadThreadByID(c.Param("tid"))
+	if err != nil {
+		return nil, err
+	}
+	tcKey := "thread-gc-" + thread.ID.Hex()
+	if _, err := c.Cookie(tcKey); err == nil {
+		return nil, errors.New("已赞")
+	}
+	err = thread.Good()
+	if err == nil {
+		c.SetCookie(tcKey, "ok", 3600*24, "/", "", false, false)
+	}
 	return nil, err
 }

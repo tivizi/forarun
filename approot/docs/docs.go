@@ -415,6 +415,14 @@ var doc = `{
                 "summary": "新站点"
             }
         },
+        "/api/v1/site/threads/:tid/good": {
+            "patch": {
+                "tags": [
+                    "站点功能"
+                ],
+                "summary": "帖子点赞"
+            }
+        },
         "/api/v1/site/threads/:tid/reply": {
             "post": {
                 "tags": [

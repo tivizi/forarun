@@ -354,6 +354,11 @@ paths:
       summary: 新站点
       tags:
       - 站点功能
+  /api/v1/site/threads/:tid/good:
+    patch:
+      summary: 帖子点赞
+      tags:
+      - 站点功能
   /api/v1/site/threads/:tid/reply:
     post:
       summary: 新帖子回复

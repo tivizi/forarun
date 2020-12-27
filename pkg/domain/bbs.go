@@ -49,6 +49,7 @@ type Thread struct {
 	CreateTime     time.Time
 	LastActiveTime time.Time
 	ViewCount      int64
+	GoodCount      int64
 	Replies        []*Reply
 }
 
@@ -244,4 +245,16 @@ func (t *Thread) IncViewCount() {
 		log.Println(err)
 	}
 	t.ViewCount++
+}
+
+// Good 点赞
+func (t *Thread) Good() error {
+	_, err := db.Collection("threads").UpdateOne(context.Background(), bson.M{"_id": t.ID}, bson.M{"$inc": bson.M{
+		"goodcount": 1,
+	}})
+	if err != nil {
+		return err
+	}
+	t.GoodCount++
+	return nil
 }
