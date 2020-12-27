@@ -50,6 +50,7 @@ type Thread struct {
 	LastActiveTime time.Time
 	ViewCount      int64
 	GoodCount      int64
+	GoodUsers      []*Session
 	Replies        []*Reply
 }
 
@@ -248,10 +249,15 @@ func (t *Thread) IncViewCount() {
 }
 
 // Good 点赞
-func (t *Thread) Good() error {
-	_, err := db.Collection("threads").UpdateOne(context.Background(), bson.M{"_id": t.ID}, bson.M{"$inc": bson.M{
-		"goodcount": 1,
-	}})
+func (t *Thread) Good(session *Session) error {
+	_, err := db.Collection("threads").UpdateOne(context.Background(), bson.M{"_id": t.ID}, bson.M{
+		"$inc": bson.M{
+			"goodcount": 1,
+		},
+		"$push": bson.M{
+			"goodusers": session,
+		}
+	})
 	if err != nil {
 		return err
 	}

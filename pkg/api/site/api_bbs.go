@@ -89,7 +89,14 @@ func newThreadGood(c *gin.Context, site *site.Context) (interface{}, error) {
 	if _, err := c.Cookie(tcKey); err == nil {
 		return nil, errors.New("已赞")
 	}
-	err = thread.Good()
+	session := site.Session
+	if session == nil {
+		session = &domain.Session{
+			UserID: site.ClientIP,
+			SID:    site.UserAgent,
+		}
+	}
+	err = thread.Good(site.Session)
 	if err == nil {
 		c.SetCookie(tcKey, "ok", 3600*24, "/", "", false, false)
 	}
