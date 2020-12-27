@@ -12,10 +12,10 @@
         .site {display: inline-block;padding: 2px 5px;color: #222;}
         #siteName {width: 100%;padding: 5px;}
         .form .prefix {width: 80px;padding: 5px 10px;border:none;border-bottom: .5px solid #ccc;}
-        .sites {padding: 0 0 0 25px;}
-        .sites li {list-style: decimal;margin: 5px 0;border-bottom: .5px solid #f0f0f0;}
-        .sites .hosts li {list-style: none;display: inline-block;}
-        .sites li .time {font-size: 13px;float: right;color: #999;margin: -30px 0 0 0;}
+        .sites-list {padding: 0 0 0 25px;}
+        .sites-list li {list-style: decimal;margin: 5px 0;border-bottom: .5px solid #f0f0f0;}
+        .sites-list .hosts li {list-style: none;display: inline-block;}
+        .sites-list li .time {font-size: 13px;float: right;color: #999;margin: -30px 0 0 0;}
     </style>
 </head>
 <body>
@@ -37,7 +37,7 @@
     </div>
     <div class="container">
         <div class="title">最近创建的站点</div>
-        <ul class="sites">
+        <ul class="sites-list">
             {{range .Sites}}
             <li>
                 <a href="https://{{index .Hosts 0}}">{{.Name}}</a>
