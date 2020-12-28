@@ -24,7 +24,7 @@ func ip(c *gin.Context, site *site.Context) (interface{}, error) {
 		return nil, err
 	}
 	return gin.H{
-		"ip":       geo,
-		"selfLink": fmt.Sprintf("https://%s/open/api/ip/%s", site.Host, ip),
+		"IP":       geo,
+		"SelfLink": fmt.Sprintf("https://%s/open/api/ip/%s", site.Host, ip),
 	}, nil
 }
