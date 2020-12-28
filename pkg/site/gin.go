@@ -314,7 +314,8 @@ func newSiteContext(c *gin.Context, site *domain.Site) Context {
 }
 
 var openURI = []string{
-	"/common",
+	"/common/",
+	"/open/",
 	"/pages/public",
 	"/login",
 	"/register",

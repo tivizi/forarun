@@ -29,6 +29,11 @@ func SimpleRegion(ip string) string {
 	return geo.String()
 }
 
+// IPInfo ip信息
+func IPInfo(ip string) (ip2region.IpInfo, error) {
+	return ipStore.BinarySearch(ip)
+}
+
 func fileExists(path string) (bool, error) {
 	_, err := os.Stat(path)
 	// 为nil,说明文件或文件夹存在
