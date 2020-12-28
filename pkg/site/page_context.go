@@ -22,9 +22,10 @@ func RenderPageWithContext(text template.HTML, site *Context) template.HTML {
 	}
 	var buf bytes.Buffer
 	tpl.Execute(&buf, gin.H{
-		"Login": site.Session != nil,
-		"Admin": site.Session != nil && site.Site.User.ID.Hex() == site.Session.UserID,
-		"Site":  site.Site,
+		"Login":       site.Session != nil,
+		"Admin":       site.Session != nil && site.Site.User.ID.Hex() == site.Session.UserID,
+		"SiteContext": site,
+		"Site":        site.Site,
 	})
 
 	ubbText := buf.String()
