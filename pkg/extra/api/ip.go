@@ -12,6 +12,10 @@ func init() {
 	r := site.DefaultEngine()
 
 	r.GET("/open/api/ip/:ip", ip)
+	r.GenericGET("/open/api/ip", toIP)
+}
+func toIP(c *gin.Context, site *site.Context) {
+	c.Redirect(302, "/open/api/ip/-")
 }
 
 func ip(c *gin.Context, site *site.Context) (interface{}, error) {
