@@ -6,6 +6,7 @@ import (
 	_ "github.com/tivizi/forarun/pkg/api/site"
 	_ "github.com/tivizi/forarun/pkg/base"
 	_ "github.com/tivizi/forarun/pkg/daemon"
+	_ "github.com/tivizi/forarun/pkg/extra/api"
 	_ "github.com/tivizi/forarun/pkg/resources"
 	_ "github.com/tivizi/forarun/pkg/resources/admin"
 	_ "github.com/tivizi/forarun/pkg/resources/site"
