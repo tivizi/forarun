@@ -168,6 +168,7 @@ func (bbs *BBS) NewThread(title, content, alias, ua string, session *Session) (*
 		Content:        content,
 		CreateTime:     time.Now(),
 		LastActiveTime: time.Now(),
+		GoodUsers:      []*Session{},
 		Replies:        []*Reply{},
 	}
 	_, err := db.Collection("threads").InsertOne(context.Background(), thread)
