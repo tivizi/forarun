@@ -96,7 +96,7 @@ func newThreadGood(c *gin.Context, site *site.Context) (interface{}, error) {
 			SID:    site.UserAgent,
 		}
 	}
-	err = thread.Good(site.Session)
+	err = thread.Good(session)
 	if err == nil {
 		c.SetCookie(tcKey, "ok", 3600*24, "/", "", false, false)
 	}
