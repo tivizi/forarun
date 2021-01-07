@@ -1,6 +1,9 @@
 package main
 
 import (
+	"encoding/hex"
+	"fmt"
+
 	_ "github.com/tivizi/forarun/approot/config"
 	_ "github.com/tivizi/forarun/pkg/api/admin"
 	_ "github.com/tivizi/forarun/pkg/api/site"
@@ -12,8 +15,6 @@ import (
 	_ "github.com/tivizi/forarun/pkg/resources/site"
 
 	_ "github.com/tivizi/forarun/approot/docs"
-
-	"github.com/tivizi/forarun/pkg/site"
 )
 
 // @title FORARUN 自助建站系统开放接口文档
@@ -25,5 +26,6 @@ import (
 // @contact.url https://fora.run
 // @contact.email tivizi@163.com
 func main() {
-	site.DefaultEngine().Run()
+	// site.DefaultEngine().Run()
+	fmt.Println(hex.EncodeToString([]byte("滑稽")))
 }
