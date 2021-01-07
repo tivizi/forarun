@@ -2,6 +2,7 @@ package base
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	minio "github.com/minio/minio-go/v7"
@@ -39,6 +40,9 @@ func init() {
 }
 
 // MinioCli 客户端
-func MinioCli() *minio.Client {
-	return minioClient
+func MinioCli() (*minio.Client, error) {
+	if !config.GetContext().MinioConfig.Enabled {
+		return nil, errors.New("对象存储已禁用")
+	}
+	return minioClient, nil
 }

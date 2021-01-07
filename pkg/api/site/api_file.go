@@ -21,7 +21,10 @@ func uploadFile(c *gin.Context, site *site.Context) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
-	mcli := base.MinioCli()
+	mcli, err := base.MinioCli()
+	if err != nil {
+		return nil, err
+	}
 	file, err := f.Open()
 	if err != nil {
 		return nil, err
