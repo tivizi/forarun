@@ -251,6 +251,8 @@ func (t *Thread) IncViewCount() {
 
 // Good 点赞
 func (t *Thread) Good(session *Session) error {
+	var options options.UpdateOptions
+	options.SetUpsert(true)
 	_, err := db.Collection("threads").UpdateOne(context.Background(), bson.M{"_id": t.ID}, bson.M{
 		"$inc": bson.M{
 			"goodcount": 1,
@@ -258,7 +260,7 @@ func (t *Thread) Good(session *Session) error {
 		"$push": bson.M{
 			"goodusers": session,
 		},
-	})
+	}, &options)
 	if err != nil {
 		return err
 	}

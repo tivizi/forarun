@@ -32,6 +32,8 @@ uninstall:
 # 持续集成
 ci: commit version swag build docker push
 	kubectl set image -n forarun deployment/forarun forarun=${REGISTRY}/${USERNAME}/forarun:${VERSION}
+cd: version push
+	kubectl set image -n forarun deployment/forarun forarun=${REGISTRY}/${USERNAME}/forarun:${VERSION}
 # 二进制
 release: clean build
 	cp bin/forarun bin/forarun-${BIG_VER}
