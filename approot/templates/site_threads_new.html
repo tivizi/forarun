@@ -10,6 +10,7 @@
     <script src="https://s3.pstatp.com/cdn/expire-1-M/codemirror/5.46.0/mode/markdown/markdown.min.js"></script>
     <title>发帖 - {{.BBS.Name}} - {{.SiteContext.Site.Name}}</title>
     <style>
+        body {background-color: #fff;}
         .title span {font-size: 12px;color: green;margin-left: 5px;}
         .form textarea {max-width: 100%;min-width: 100%;padding: 10px 5px;min-height: 46px;line-height: 22px;font-size: 16px;}
         .form #content {min-height: 420px;}
@@ -27,13 +28,15 @@
 <body>
     {{rwctx .SiteContext.Site.Header .SiteContext}}
     <nav>
-        <ul>
-            <li><a href="/">首页</a></li>
-            {{range .BBS.BBSContexts}}
-            <li><a href="/bbs-{{.ID.Hex}}.html">{{.Name}}</a></li>
-            {{end}}
-            <li>新帖子</li>
-        </ul>
+        <div>
+            <ul>
+                <li><a href="/">首页</a></li>
+                {{range .BBS.BBSContexts}}
+                <li><a href="/bbs-{{.ID.Hex}}.html">{{.Name}}</a></li>
+                {{end}}
+                <li>新帖子</li>
+            </ul>
+        </div>
     </nav>
     <div class="form">
         <div class="title">*标题</div>

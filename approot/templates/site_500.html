@@ -5,5 +5,12 @@
 <title>Server Error</title>
 <style>* {font-size: 16px;line-height: 28px;} a {text-decoration: none;color: green;} main,footer {text-align: center;}</style>
 <br />
-<main>Server Error: {{.Message}}</main>
+<main>
+    <div class="mainBar">
+        <div class="mainArea">
+            <div class="title">遇到一个错误</div>
+            {{.Message}}
+        </div>
+    </div>
+</main>
 <footer>Powered by <a href="https://fora.run">FORARUN</a></footer>

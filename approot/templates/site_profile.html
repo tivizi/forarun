@@ -25,36 +25,38 @@
     </ul>
 </nav>
 <main>
-<div class="profile">
-    <div class="title">基础资料</div>
-    <ul>
-        <li>用户名：{{.User.Name}}{{if .Online}}<span class="online">在线</span>{{else}}<span class="offline">不在线</span>{{end}}</li>
-        <li>邮箱：{{if .SiteContext.Session}}{{.User.Email}}{{else}}******{{end}}</li>
-        <li>注册时间：{{intelliTime .User.CreateTime}}</li>
-        <li>注册地点：{{$s := site .User.SiteID.Hex}}{{if $s}}<a href="https://{{index $s.Hosts 0}}">{{$s.Name}}</a>{{else}}查询中{{end}}</li>
-        <li>金币：<span class="coin">
-            {{if .User.Coins}}
-                {{if (index .User.Coins .SiteContext.Site.ID.Hex)}}
-                    {{index .User.Coins .SiteContext.Site.ID.Hex}}
-                {{else}}0{{end}}
-            {{else}}0{{end}}</span></li>
-        <li>在线时长：{{if .User.OnlineDuration}}
-            <span>{{intelliDuration (index .User.OnlineDuration .SiteContext.Site.ID.Hex).Duration}}</span>
-            {{else}}
-            <span>不足1分钟</span>
-            {{end}}</li>
-        <li>状态：{{if .User.Active}}<span class="actived">已激活</span>{{else}}<span class="unactived">未激活</span>{{end}}</li>
-    </ul>
-    {{if .SiteContext.Session}}
-    {{if eq .User.Name .SiteContext.Session.Name}}
-    <div class="title">操作</div>
-    <ul>
-        <li><a href="/logout.html">登出当前帐号</a></li>
-        {{if eq .SiteContext.Session.UserID .SiteContext.Site.User.ID.Hex}}
-        <li><a href="/pages/site/admin/index.html">管理后台</a></li>
-        {{end}}
-    </ul>
-    {{end}}{{end}}
+<div class="mainBar">
+    <div class="profile stdbox">
+        <div class="title">基础资料</div>
+        <ul>
+            <li>用户名：{{.User.Name}}{{if .Online}}<span class="online">在线</span>{{else}}<span class="offline">不在线</span>{{end}}</li>
+            <li>邮箱：{{if .SiteContext.Session}}{{.User.Email}}{{else}}******{{end}}</li>
+            <li>注册时间：{{intelliTime .User.CreateTime}}</li>
+            <li>注册地点：{{$s := site .User.SiteID.Hex}}{{if $s}}<a href="https://{{index $s.Hosts 0}}">{{$s.Name}}</a>{{else}}查询中{{end}}</li>
+            <li>金币：<span class="coin">
+                {{if .User.Coins}}
+                    {{if (index .User.Coins .SiteContext.Site.ID.Hex)}}
+                        {{index .User.Coins .SiteContext.Site.ID.Hex}}
+                    {{else}}0{{end}}
+                {{else}}0{{end}}</span></li>
+            <li>在线时长：{{if .User.OnlineDuration}}
+                <span>{{intelliDuration (index .User.OnlineDuration .SiteContext.Site.ID.Hex).Duration}}</span>
+                {{else}}
+                <span>不足1分钟</span>
+                {{end}}</li>
+            <li>状态：{{if .User.Active}}<span class="actived">已激活</span>{{else}}<span class="unactived">未激活</span>{{end}}</li>
+        </ul>
+        {{if .SiteContext.Session}}
+        {{if eq .User.Name .SiteContext.Session.Name}}
+        <div class="title">操作</div>
+        <ul>
+            <li><a href="/logout.html">登出当前帐号</a></li>
+            {{if eq .SiteContext.Session.UserID .SiteContext.Site.User.ID.Hex}}
+            <li><a href="/pages/site/admin/index.html">管理后台</a></li>
+            {{end}}
+        </ul>
+        {{end}}{{end}}
+    </div>
 </div>
 </main>
 <script>

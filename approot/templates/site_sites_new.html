@@ -21,35 +21,39 @@
 <body>
 {{rwctx .SiteContext.Site.Header .SiteContext}}
 <nav>
-    <ul>
-        <li><a href="/">首页</a></li>
-        <li>注册新站点</li>
-    </ul>
+    <div>
+        <ul>
+            <li><a href="/">首页</a></li>
+            <li>注册新站点</li>
+        </ul>
+    </div>
 </nav>
 <main>
-    <div class="form">
-        <div class="title">*站点名</div>
-        <input id="siteName" type="text" placeholder="站点名" />
-        <div class="title">*域名</div>
-        <span class="site">https://</span><input class="site prefix" id="sitePrefix" type="text" placeholder="前缀" /><span class="site">.{{.SiteConfig.Domain}}</span>
-        <br />
-        <button id="mainAction" onclick="registerSite()">提交注册</button>
-    </div>
-    <div class="container">
-        <div class="title">最近创建的站点</div>
-        <ul class="sites-list">
-            {{range .Sites}}
-            <li>
-                <a href="https://{{index .Hosts 0}}">{{.Name}}</a>
-                <ul class="hosts">
-                    {{range $h := .Hosts}}
-                    <li>{{$h}}</li>
-                    {{end}}
-                </ul>
-                <span class="time">{{intelliTime .CreateTime}}</span>
-            </li>
-            {{end}}
-        </ul>
+    <div class="mainBar">
+        <div class="form">
+            <div class="title">*站点名</div>
+            <input id="siteName" type="text" placeholder="站点名" />
+            <div class="title">*域名</div>
+            <span class="site">https://</span><input class="site prefix" id="sitePrefix" type="text" placeholder="前缀" /><span class="site">.{{.SiteConfig.Domain}}</span>
+            <br />
+            <button id="mainAction" onclick="registerSite()">提交注册</button>
+        </div>
+        <div class="container">
+            <div class="title">最近创建的站点</div>
+            <ul class="sites-list">
+                {{range .Sites}}
+                <li>
+                    <a href="https://{{index .Hosts 0}}">{{.Name}}</a>
+                    <ul class="hosts">
+                        {{range $h := .Hosts}}
+                        <li>{{$h}}</li>
+                        {{end}}
+                    </ul>
+                    <span class="time">{{intelliTime .CreateTime}}</span>
+                </li>
+                {{end}}
+            </ul>
+        </div>
     </div>
 </main>
 <script>

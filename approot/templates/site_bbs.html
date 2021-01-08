@@ -15,7 +15,7 @@
         .threads li .viewcount {font-size: 12px;}
         .threads .author,.threads .time {color: #999;font-size: 13px;}
         .threads .author a {font-size: 13px;color: #787878;margin-right: 3px;}
-        .subs {padding: 0 10px 10px 10px;}
+        .subs {padding: 0 10px 10px 10px;background-color: #fff;}
         .subs ul {line-height: 26px;}
         .subs ul li {display: inline-block;margin: 0 5px 0 0;}
         .subs ul li::before {content: "•";font-size: 10px;float: left;margin: 0 5px 0 0;}
@@ -27,16 +27,19 @@
 <body>
     {{rwctx .SiteContext.Site.Header .SiteContext}}
     <nav>
-        <ul>
-            <li><a href="/">首页</a></li>
-            {{range .BBS.BBSContexts}}
-            <li><a href="/bbs-{{.ID.Hex}}.html">{{.Name}}</a></li>
-            {{end}}
-        </ul>
+        <div>
+            <ul>
+                <li><a href="/">首页</a></li>
+                {{range .BBS.BBSContexts}}
+                <li><a href="/bbs-{{.ID.Hex}}.html">{{.Name}}</a></li>
+                {{end}}
+            </ul>
+        </div>
     </nav>
     <main>
+    <div class="mainBar">
     {{if .BBS.Subs}}
-    <div class="subs">
+    <div class="subs stdbox">
         <span class="title">子版：</span>
         <ul>
             {{range .BBS.Subs}}
@@ -45,23 +48,26 @@
         </ul>
     </div>
     {{end}}
-    <div class="ops">
-        <a href="/pages/site/bbs/{{.BBS.ID.Hex}}/threads-new.html">发帖</a>
+    <div class="mainArea">
+        <div class="ops">
+            <a href="/pages/site/bbs/{{.BBS.ID.Hex}}/threads-new.html">发帖</a>
+        </div>
+        <ul class="threads">
+            {{if eq (len .Threads) 0 }}
+            <li class="empty">暂无帖子</li>
+            {{else}}
+            {{range .Threads}}
+            <li>
+                <a href="/threads-{{.ID.Hex}}.html">{{.Title}}</a><span class="viewcount">({{.ViewCount}}阅)</span>
+                <div class="item">
+                    <span class="author"><a href="/profile/{{.Author.Name}}">{{.Author.Name}}</a></span>
+                    <span class="time">{{intelliTime .CreateTime}}</span>
+                </div>
+            </li>
+            {{end}}{{end}}
+        </ul>
     </div>
-    <ul class="threads">
-        {{if eq (len .Threads) 0 }}
-        <li class="empty">暂无帖子</li>
-        {{else}}
-        {{range .Threads}}
-        <li>
-            <a href="/threads-{{.ID.Hex}}.html">{{.Title}}</a><span class="viewcount">({{.ViewCount}}阅)</span>
-            <div class="item">
-                <span class="author"><a href="/profile/{{.Author.Name}}">{{.Author.Name}}</a></span>
-                <span class="time">{{intelliTime .CreateTime}}</span>
-            </div>
-        </li>
-        {{end}}{{end}}
-    </ul>
+    </div>
     </main>
     {{rwctx .SiteContext.Site.Footer .SiteContext}}
 </body></html>
