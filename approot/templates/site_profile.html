@@ -42,7 +42,7 @@
                     {{else}}0{{end}}
                 {{else}}0{{end}}</span></li>
             <li>在线时长：{{if .User.OnlineDuration}}
-                <span>{{intelliDuration (index .User.OnlineDuration .SiteContext.Site.ID.Hex).Duration}}</span>
+                <span>{{intelliDuration (index .User.OnlineDuration .SiteContext.Site.ID.Hex).Duration}}，最后在{{intelliTime (index .User.OnlineDuration .SiteContext.Site.ID.Hex).LastActiveTime}}</span>
                 {{else}}
                 <span>不足1分钟</span>
                 {{end}}</li>
